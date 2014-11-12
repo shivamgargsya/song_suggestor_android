@@ -1,0 +1,100 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.music.SecondActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+             <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+             
+            
+        </LinearLayout>
+    </ScrollView>
+    <ListView
+                 android:id="@+id/song_list"
+                 android:layout_width="match_parent"
+                 android:scrollbars="none"
+                  android:layout_height="0dp"
+      				android:layout_weight="1" >
+             </ListView>
+             <RelativeLayout
+        android:id="@+id/player_footer_bg2"
+        android:layout_width="fill_parent"
+        android:layout_height="76dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bar" >
+
+        <!-- Player Buttons -->
+          <ProgressBar
+        android:id="@+id/progressBar2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="300dp"
+        android:max="100"
+         android:progress="1"
+         android:layout_marginLeft="8dp" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+           
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" 
+            android:layout_marginRight="10dp"
+            android:background="@color/bar">
+
+            <ImageButton
+                android:id="@+id/btnPlay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+              
+                android:src="@drawable/play_button" 
+                android:background="@color/bar"/>
+           
+        </LinearLayout>
+
+      
+             
+
+        <TextView
+            android:id="@+id/song_name2"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+             android:layout_alignParentLeft="true"
+            android:layout_below="@+id/progressBar1"
+            android:layout_marginTop="5dp"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:background="@color/bar"
+            android:textColor="@color/white"/>
+
+      
+
+    </RelativeLayout>
+    
+    </LinearLayout>
+

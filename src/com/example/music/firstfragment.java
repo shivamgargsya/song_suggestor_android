@@ -1,0 +1,343 @@
+package com.example.music;
+
+import java.util.Hashtable;
+
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.GridLayout;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class firstfragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  {
+	String[] uri=null;
+	String[] st=null;
+	@Override
+	
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.first, container,
+				false);
+		return rootView;
+	}
+	
+	@Override public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+	    getLoaderManager().initLoader(0, null,(LoaderManager.LoaderCallbacks<Cursor>)this);
+	}
+
+
+	//************************THE DATA FOR PROVIDER
+	String[] mProjection =
+	{
+		
+		MediaStore.Audio.Albums.ALBUM,
+		MediaStore.Audio.Albums.ALBUM_ART,
+		
+		
+	   
+	};
+	
+	public static Cursor song;
+	@Override
+	public android.support.v4.content.Loader<Cursor> onCreateLoader(int arg0,
+			Bundle arg1) {
+		// TODO Auto-generated method stub
+		if(arg0==0)
+		{
+			return new CursorLoader(getActivity(),MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,mProjection, null, null, null);
+		}
+		else
+		{
+			return  new CursorLoader(getActivity(),MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null, null, null, null);
+		}
+	}
+	public static Hashtable hs=new Hashtable();
+	public Myadapter adapter;
+	@Override
+	public void onLoadFinished(android.support.v4.content.Loader<Cursor> arg0,
+			Cursor data) {
+		String s="";
+		String sr="";
+		String db="";
+		
+		
+		if(arg0.getId()==0)
+			{
+				
+			
+					
+					
+					
+					
+					 if(data!=null)
+				     {
+				     	 int index = data.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART);
+				     	 int i=data.getColumnIndex(MediaStore.Audio.Albums.ALBUM);
+				     	 
+				     	while(data.moveToNext())
+				     	{
+				     	
+				     	    try
+				     	    {
+				     	    	s=data.getString(index);
+				     	    	
+				     	    }
+				     	    catch(Exception e)
+				     	    {
+				     	    	s=null;
+				     	    }
+				     		if(s!=null)
+				     	    //db=db.concat(s);
+				     	    
+				     		try
+				     		{
+				     		sr=data.getString(i);
+				     		//db=db.concat(sr);
+				     		}
+				     		catch(Exception e)
+				     		{
+				     			sr="empty";
+				     		}
+				     		
+				     		
+				     		
+				     		if(s!=null)
+				     			
+				     			{
+				     				if(sr!=null)
+				     				{
+				     					hs.put(sr,s);
+				     					db=db.concat(s+sr+"  ");
+				     				}
+				     				
+				     			}
+				     		
+				     	}
+				     }
+					 //tv.setText(hs.toString());
+					 getLoaderManager().initLoader(1, null,(LoaderManager.LoaderCallbacks<Cursor>)this);
+					//
+		
+				
+		}
+		
+	//IMPLEMENTATION FOR MEDIA  LOADER
+		else
+		{
+			myview mv=null;
+			GridView lv=null;
+			
+			String sa="";
+			
+			Uri[] suri=null;
+			int k=0;
+			lv=(GridView)getView().findViewById(R.id.grv2);
+			if(data!=null)
+		     {	
+				 song=data;
+		     	 int index = data.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+		     	 int i=data.getColumnIndex(MediaStore.Audio.Media.TITLE);
+		     	 int l=data.getColumnIndex(MediaStore.Audio.Media._ID);
+		     	 long thisid;
+		     	st=new String[data.getCount()];
+		     	uri=new String[data.getCount()];
+		     	suri=new Uri[data.getCount()];
+		     	final playback list = (playback) getActivity().getApplicationContext();
+		     	while(data.moveToNext())
+		     	{
+		     	
+		     	    sa=data.getString(index);
+		     		mv= new myview(getActivity(),null);
+		     		if(sa!=null)
+		     		{
+		     			uri[k]=(String)hs.get(sa);
+		     		}
+		     		st[k]=data.getString(i);
+		     		thisid=data.getLong(l);
+		     		suri[k] = ContentUris.withAppendedId(
+					        android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, thisid);
+		     		
+		     		
+		     		
+		     		k++;
+		     		
+		     	}
+		     	list.songart=uri;
+		     	list.songuri=suri;
+		     	list.title=st;
+		     	
+		     	 adapter=new Myadapter(getActivity(),st,uri);
+	     		lv.setAdapter(adapter);
+	     		
+	     		//adding the first song
+	     		MainActivity m=(MainActivity)getActivity();
+				Player p=(Player)m.mService;
+				if(!p.check())
+				p.startit(0);
+				ImageButton but=(ImageButton)m.findViewById(R.id.btnPlay);
+				but.setImageResource(R.drawable.pause_button);
+				but.setEnabled(false);
+				ImageButton im=(ImageButton)m.findViewById(R.id.song_art);
+				
+				String ss=uri[0];
+				if(ss!=null)
+				{
+					Bitmap bitmap;
+					BitmapFactory.Options option = new BitmapFactory.Options();
+					bitmap=BitmapFactory.decodeFile(ss, option);
+					Bitmap bit=Bitmap.createScaledBitmap(bitmap, 56,56,false);
+					im.setImageBitmap(bit);
+				}
+				else
+				{
+					im.setImageResource(R.drawable.icon_tumblr);
+				}
+				
+				TextView tv=(TextView)m.findViewById(R.id.song_name);
+				tv.setText(st[0]);
+				p.mplayer.pause();
+				
+	     		
+     		
+	     		lv.setOnItemClickListener(new OnItemClickListener()
+	     		{
+
+					@Override
+					public void onItemClick(AdapterView<?> adapter, View view,
+							int position, long id) {
+						// TODO Auto-generated method stub
+						
+						MainActivity m=(MainActivity)getActivity();
+						Player p=(Player)m.mService;
+						p.startit(position);
+						ImageButton but=(ImageButton)m.findViewById(R.id.btnPlay);
+						but.setImageResource(R.drawable.pause_button);
+						ImageView im=(ImageView)m.findViewById(R.id.song_art);
+						String s=uri[position];
+						if(s!=null)
+						{
+							Bitmap bitmap;
+							BitmapFactory.Options option = new BitmapFactory.Options();
+							bitmap=BitmapFactory.decodeFile(s, option);
+							Bitmap bit=Bitmap.createScaledBitmap(bitmap, 56,56,false);
+							im.setImageBitmap(bit);
+							
+							but.setEnabled(true);
+						}
+						else
+						{
+							im.setImageResource(R.drawable.icon_tumblr);
+						}
+						
+						TextView tv=(TextView)m.findViewById(R.id.song_name);
+						tv.setText(st[position]);
+						
+						
+						
+					
+							
+						
+						
+						
+					}
+	     			
+	     		});
+		     
+		     	
+		     }
+			
+		}
+		
+		
+	}
+	@Override
+	public void onLoaderReset(android.support.v4.content.Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		
+		GridView lv=(GridView)getView().findViewById(R.id.grv2);
+		lv.setAdapter(null);
+		 getLoaderManager().restartLoader(0, null, this);
+
+	
+		
+	}
+	//ADAPTER FOR THE LIST VIEW
+	public class Myadapter extends ArrayAdapter<String>{
+		String title[];
+		String i_uri[];
+		Context context;
+		public Myadapter(Context c,String[] sa,String[] uri)
+		{
+			super(c,R.layout.custom,sa);
+			title=sa;
+			i_uri=uri;
+			context=c;
+		}
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) 
+		{
+			LayoutInflater inflater = (LayoutInflater) context
+			        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View mv=inflater.inflate(R.layout.custom, parent, false);
+			 TextView textView = (TextView) mv.findViewById(R.id.tv1);
+			 textView.setHeight(96);
+			 textView.setWidth(230);
+			    ImageView imageView = (ImageView) mv.findViewById(R.id.im1);
+			    if(title[position]!=null)
+			    textView.setText(title[position]);
+			    imageView.setMinimumHeight(182);
+			    imageView.setMinimumWidth(230);
+			    if(i_uri[position]!=null)
+			    {
+			    	 Bitmap bitmap;
+						BitmapFactory.Options option = new BitmapFactory.Options();
+						bitmap=BitmapFactory.decodeFile(i_uri[position], option);
+						Bitmap bit=Bitmap.createScaledBitmap(bitmap, 230,182,false);
+						imageView.setImageBitmap(bit);
+			    }
+			    else
+			    {
+			    	imageView.setImageResource(R.drawable.icon);
+			    }
+			   
+			    return mv;
+			
+			
+		}
+		@Override
+		public int getCount()
+		{
+			return title.length;
+		}
+	}
+	@Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+		getLoaderManager().destroyLoader(0);
+		getLoaderManager().destroyLoader(1);
+		
+	}
+		
+}

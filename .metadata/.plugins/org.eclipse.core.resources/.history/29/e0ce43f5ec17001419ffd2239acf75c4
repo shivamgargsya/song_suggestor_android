@@ -1,0 +1,116 @@
+package com.dhsit.pos;
+
+import java.util.Calendar;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+public class DeleteItems extends Activity implements View.OnClickListener{
+
+	
+	TextView orderNum, tableNum, date, cusName, cusMobile, waiterName, waiterId, totalamount,itemname,quantity,totalprice;
+	Button total,save,viewdel;
+	Spinner sDelReason;
+	EditText etDiscount, etNotes;
+	private int pyear;
+    private int pmonth;
+    private int pday;
+    Calendar cal;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.delete_items);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		orderNum = (TextView) findViewById(R.id.tvDelOrderNo);
+		tableNum = (TextView) findViewById(R.id.tvDelTableNo);
+		date = ((TextView) findViewById(R.id.tvDelDate));
+		cusName = (TextView) findViewById(R.id.tvDelCustID);
+		cusMobile = (TextView) findViewById(R.id.tvDelCusMobile);
+		waiterName  = (TextView) findViewById(R.id.tvDelWaiterName);
+		waiterId = (TextView) findViewById(R.id.tvDelWaiterID);
+		totalamount = (TextView) findViewById(R.id.tvDelTotalAmount);
+		itemname = (TextView) findViewById(R.id.tvItemName);
+		quantity = (TextView) findViewById(R.id.tvQuantity);
+		totalprice = (TextView) findViewById(R.id.tvTotalPrice);
+		sDelReason = (Spinner) findViewById(R.id.sDeleteReason);
+		
+		total = (Button) findViewById(R.id.bDelTotalAmount);
+		save = (Button) findViewById(R.id.bDelSave);
+		viewdel = (Button) findViewById(R.id.bViewDeleteItems);
+		
+		String[] delreason = new String[]{"Wrong Order", "Cancel Order", "Reason 3"};
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, delreason);
+		sDelReason.setAdapter(adapter);
+		
+		cal = Calendar.getInstance();
+		pyear = cal.get(Calendar.YEAR);
+	    pmonth = cal.get(Calendar.MONTH);
+	    pday = cal.get(Calendar.DAY_OF_MONTH);
+	    int month = pmonth+1;
+		String setDate = pday + "/" + month + "/" + pyear + "";
+		date.setText(setDate);
+	}
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch(v.getId()){
+		case R.id.bDelSave:
+			
+			break;
+		case R.id.bDelTotalAmount:
+			
+			break;
+		case R.id.bViewDeleteItems:
+			startActivity(new Intent(DeleteItems.this,ViewDeleteItem.class));
+			overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+			break;
+			
+		
+		}
+	}
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		startActivity(new Intent(DeleteItems.this,CustomerBill.class));
+		overridePendingTransition(R.anim.open_main, R.anim.close_next);
+		this.finish();
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.withhome, menu);
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}else if (id == R.id.action_home) {
+			DeleteItems.this.finish();
+			startActivity(new Intent(DeleteItems.this,ActivityMain.class));
+			overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+			
+		}else if (id == android.R.id.home) {
+			this.finish();
+			
+			overridePendingTransition(R.anim.open_main, R.anim.close_next);
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}
